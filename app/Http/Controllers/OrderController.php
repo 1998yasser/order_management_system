@@ -73,7 +73,7 @@ class OrderController extends Controller
     {
         $order = Order::with('customer')->where("id",$id)->first();
         $order->update([
-           
+
             'confirmed' => 0,
             'status' => 'canceled'
         ]);
@@ -119,7 +119,7 @@ class OrderController extends Controller
         ];
 
         try {
-            $response = Http::send('POST', 'https://api.ozonexpress.ma/customers/7760/aa4897-14c8a1-d02fa4-899689-a867d6/add-parcel', $options);
+            $response = Http::send('POST', '', $options);
             $data = json_decode($response, true);
 
             $trackingNumber = $data['ADD-PARCEL']['NEW-PARCEL']['TRACKING-NUMBER'];

@@ -27,8 +27,8 @@ class FetchClientsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $response = Http::withBasicAuth('ck_d8597a8e03dcb2b349330a490994f4d6a885acf0', 'cs_6ededdc559e1af07ef44cbf4c2568bbd3b286157')
-        ->get('https://mysi.ma/wp-json/wc/v3/orders');
+        $response = Http::withBasicAuth('', '')
+        ->get('');
 
             if ($response->successful()) {
             $orders = $response->json(); // Get the JSON response body

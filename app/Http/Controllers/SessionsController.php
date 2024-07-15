@@ -20,7 +20,7 @@ class SessionsController extends Controller
     {
         $attributes = request()->validate([
             'email'=>'required|email',
-            'password'=>'required' 
+            'password'=>'required'
         ]);
 
         if(Auth::attempt($attributes))
@@ -33,7 +33,7 @@ class SessionsController extends Controller
             return back()->withErrors(['email'=>'Email or password invalid.']);
         }
     }
-    
+
     public function destroy()
     {
 
@@ -43,8 +43,8 @@ class SessionsController extends Controller
     }
 
     public function getClient(){
-        $response = Http::withBasicAuth('ck_d8597a8e03dcb2b349330a490994f4d6a885acf0', 'cs_6ededdc559e1af07ef44cbf4c2568bbd3b286157')
-        ->get('https://mysi.ma/wp-json/wc/v3/orders');
+        $response = Http::withBasicAuth('', '')
+        ->get('');
 
             if ($response->successful()) {
             $orders = $response->json(); // Get the JSON response body
@@ -80,8 +80,8 @@ class SessionsController extends Controller
 
     public function getProduct()
     {
-        $response = Http::withBasicAuth('ck_d8597a8e03dcb2b349330a490994f4d6a885acf0', 'cs_6ededdc559e1af07ef44cbf4c2568bbd3b286157')
-        ->get('https://mysi.ma/wp-json/wc/v3/products');
+        $response = Http::withBasicAuth('', '')
+        ->get('');
 
             if ($response->successful()) {
             $products = $response->json(); // Get the JSON response body
@@ -119,8 +119,8 @@ class SessionsController extends Controller
     }
 
     public function getOrder(){
-        $response = Http::withBasicAuth('ck_d8597a8e03dcb2b349330a490994f4d6a885acf0', 'cs_6ededdc559e1af07ef44cbf4c2568bbd3b286157')
-        ->get('https://mysi.ma/wp-json/wc/v3/orders');
+        $response = Http::withBasicAuth('', '')
+        ->get('');
 
         if ($response->successful()) {
 
@@ -128,7 +128,7 @@ class SessionsController extends Controller
         // return view("orders",compact('orders'));
 
         foreach($orders as $order){
-        
+
             $dateCreated = $order['date_created'];
             $dateModified = $order['date_modified'];
             $formattedDate_1 = Carbon::createFromFormat('Y-m-d\TH:i:s', $dateCreated)->toDateString();
@@ -143,52 +143,52 @@ class SessionsController extends Controller
                 'shipping_total' => $order['shipping_total'],
                 'total' => $order['total'],
                 'customer_id' =>$order['billing']["phone"],
-            
+
             ];
-        
+
             // Check if the product already exists in the database based on its name
             $result = DB::table('orders')->where('id', $Data['id'])->first();
-        
+
             // If the ordrer doesn't exist, insert it into the database
             if (!$result) {
-            
+
                 DB::table('orders')->insert($Data);
-            
+
                 //insertion dans la table order_product
                 $lines=$order['line_items'];
-            
+
                 foreach($lines as $product){
-                
+
                     $Data_product = [
                         'order_id' => $order['id'],
                         'product_id' => $product['product_id'],
                         'quantity' => $product['quantity'] ,
                     ];
-                
+
                     $productExist = DB::table('products')->where('id', $Data_product['product_id'])->first();
                     if(!$productExist){
-                    
+
                         $price=str($product['price']);
-                    
+
                         DB::table('products')->insert([
                             'id'=>$product['product_id'],
-                        
+
                             'name' => $product['name'],
-                        
+
                             'price' =>  $price,
-                        
+
                             'images' => $product['image']['src'],
-                        
+
                         ]);
-                    
+
                     }
                     DB::table('order_product')->insert($Data_product);
-                
-                
+
+
                 }
-            
-            
-            
+
+
+
             }
         }
         }
